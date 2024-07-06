@@ -1,5 +1,6 @@
 // URL del servidor
-const PORT = process.env.PORT;
+
+const PORT = 3000;
 const SERVER_URL = `http://localhost:${PORT}`;
 
 // Maneja el evento 'submit' del formulario de inicio de sesión con id 'loginForm'
@@ -139,8 +140,9 @@ btn.addEventListener("click", function () {
   // Si no hay token...
   if (!token) {
     alert("Por favor, inicia sesión primero");
-    return res.text();
+    return;
   }
+  console.log(`Token: ${token}`);
   // Objeto para configurar el fetch
   const options = {
     // Método de obtención
@@ -154,7 +156,6 @@ btn.addEventListener("click", function () {
   //Petición asíncrona
   fetch(`${SERVER_URL}/auth/protected`, options)
     .then((res) => {
-    console.log(res)
     //Si no obtenemos respuesta
       if (!res.ok) {
         throw new Error("Error al acceder a la ruta protegida");

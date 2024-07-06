@@ -1,31 +1,27 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel.js'); // Import your User model
-const config = require('../config/config.js');
-
-
+const dotenv = require('dotenv');
+dotenv.config();
 
 const authMiddleware = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-    if(!authHeader) return res.status(403).send({auth:false,message:'No se proveyó un token'});
-  const token = req.headers.authorization.split(' ')[1];
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).send('Authorization header missing');
+  }
+
+  const token = authHeader.split(' ')[1];
+
   if (!token) {
-    return res.status(401).send('Access denied');
+    return res.status(401).send('Token missing');
   }
 
   try {
-    const decoded = jwt.verify(token, "secretKey");
-    req.userId = decoded.id;
-    console.log('Decoded JWT:', decoded);
-    User.findById(decoded.id, (err, user) => {
-      if (err || !user) {
-        return res.status(404).send('User not found');
-      }
-      req.username = user.username;
-      next();
-    });
+    const decoded = jwt.verify(token, process.env.CLAVE);
+    req.user = decoded;
+    next();
   } catch (error) {
-    res.status(400).send('Invalid token');
+    return res.status(401).send('Invalid token');
   }
 };
 

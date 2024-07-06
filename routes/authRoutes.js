@@ -9,7 +9,7 @@ router.post('/register',authController.register);
 router.post('/login',authController.login);
 
 router.get('/protected', authMiddleware, (req, res) => {
-    res.status(200).send(`Hola usuario ${req.id}`);
+    res.status(200).send(`Hola usuario ${req.user.id}`);
   });
 
 module.exports = router;
